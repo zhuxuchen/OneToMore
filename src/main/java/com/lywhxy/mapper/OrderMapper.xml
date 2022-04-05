@@ -2,6 +2,44 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace表示命名空间 -->
-<mapper namespace="">
-
+<mapper namespace="com.lywhxy.mapper.OrderMapper">
+    <!--根据用户id查询出对应的订单信息-->
+    <select id="selectOrderById" parameterType="Integer" resultType="Order">
+        select * from orders
+        where user_id = #{id}
+    </select>
+    <!--根据订单id查询订单，并将该订单的产品查询出来-->
+    <!--嵌套查询-->
+    <resultMap id="OrderMapper1" type="Order">
+        <collection property="products" column="id" ofType="Product"
+                    select="com.lywhxy.mapper.ProductsMapper.selectProductsByOrderId"/>
+    </resultMap>
+    <select id="selectOrderByIdMethod1" parameterType="String" resultMap="OrderMapper1">
+        select * from orders
+        where id = #{id}
+    </select>
+    <!--嵌套结果-->
+    <resultMap id="OrderMapper2" type="Order">
+        <id property="id" column="id"/>
+        <result property="money" column="money"/>
+        <result property="receiverAddress" column="receiverAddress"/>
+        <result property="receiverName" column="receiverName"/>
+        <result property="receiverPhone" column="receiverPhone"/>
+        <result property="ordertime" column="ordertime"/>
+        <collection property="products" ofType="Product">
+            <id property="id" column="product_id"/>
+            <result property="name" column="name"/>
+            <result property="price" column="price"/>
+            <result property="category" column="category"/>
+            <result property="pnum" column="pnum"/>
+            <result property="imgurl" column="imgurl"/>
+            <result property="description" column="description"/>
+        </collection>
+    </resultMap>
+    <select id="selectOrderByIdMethod2" parameterType="String" resultMap="OrderMapper2">
+        select * from orders
+        left join orderitem o on orders.id = o.order_id
+        left join products p on p.id = o.product_id
+        where orders.id = #{id}
+    </select>
 </mapper>

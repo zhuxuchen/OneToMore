@@ -2,6 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace表示命名空间 -->
-<mapper namespace="">
-
+<mapper namespace="com.lywhxy.mapper.UserMapper">
+    <!--根据用户id查询用户，同时把用户所有订单信息查询出来-->
+    <!--嵌套查询，先查询一个信息，再去查询关联信息-->
+    <!--User getUserByIdMethod1(int id);-->
+    <resultMap id="UserMapper1" type="User">
+        <!--根据用户id查询对应的订单信息-->
+        <!--association:查询结果映射到对象-->
+        <!--collection:查询结果映射到对象的List-->
+        <!--column:select * from user where id = #{id} 查询结果中的列名-->
+        <collection property="orderList" column="id" ofType="Order"
+                    select="com.lywhxy.mapper.OrderMapper.selectOrderById"/>
+    </resultMap>
+    <select id="getUserByIdMethod1" parameterType="Integer" resultMap="UserMapper1">
+        select * from user where id = #{id}
+    </select>
+    <!--嵌套结果，一次把所有需要的信息都查询出来-->
+    <!--User getUserByIdMethod2(int id);-->
+    <resultMap id="UserMapper2" type="User">
+        <!--查询结果列到用户属性的映射关系-->
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="gender" column="gender"/>
+        <result property="email" column="email"/>
+        <collection property="orderList" ofType="Order">
+            <id property="id" column="order_id"/>
+            <result property="money" column="money"/>
+            <result property="receiverAddress" column="receiverAddress"/>
+            <result property="receiverName" column="receiverName"/>
+            <result property="receiverPhone" column="receiverPhone"/>
+            <result property="ordertime" column="ordertime"/>
+        </collection>
+    </resultMap>
+    <select id="getUserByIdMethod2" parameterType="Integer" resultMap="UserMapper2">
+        select u.*,o.id as order_id,o.money,o.receiverAddress,o.receiverName,o.receiverPhone,o.ordertime
+        from user as u
+        left join orders o on u.id = o.user_id
+        where u.id = #{id}
+    </select>
 </mapper>

@@ -2,6 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace表示命名空间 -->
-<mapper namespace="">
-
+<mapper namespace="com.lywhxy.mapper.ProductsMapper">
+    <select id="selectProductsByOrderId" parameterType="String" resultType="Product">
+        select * from products
+        left join orderitem o on products.id = o.product_id
+        where o.order_id = #{id}
+    </select>
 </mapper>

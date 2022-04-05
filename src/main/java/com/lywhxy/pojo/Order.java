@@ -68,7 +68,7 @@ public class Order implements Serializable{
 	}
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", money=" + money + ", receiverAddress=" + receiverAddress + ", receiverName="
+		return "\nOrder [id=" + id + ", money=" + money + ", receiverAddress=" + receiverAddress + ", receiverName="
 				+ receiverName + ", receiverPhone=" + receiverPhone + ", ordertime=" + ordertime + ", user=" + user
 				+ ", products=" + products + "]";
 	}
